@@ -4,40 +4,10 @@ import { FAB,CheckBox,SearchBar,BottomSheet,Input,ListItem} from 'react-native-e
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch ,useSelector } from 'react-redux';
-import { addTask } from '../redux/action';
+import { addTask, checkTask } from '../redux/action';
+import nextId from "react-id-generator";
 
 
-const CardContent=(props)=>{
-  return (
-  <View>
-   
-    <Text style={styles.heading}>
-       {props.content.title}
-      </Text>
-      <Text style={styles.subHeading}>
-        {props.content.task}
-      </Text>
-  </View>
-  )
-}
-const Card=(props)=>{
- //console.log(props);
-  return(
-    
-    <View style={styles.card}>
-
-      <CheckBox
-
-        title={<CardContent content={props.props}/>}
-        checked={props.props.isComplete}
-       
-        checkedIcon={<Ionicons name={'checkmark-circle'} size={30} color={'dodgerblue'}/>}
-      />
-
-      
-    </View>
-  )
-}
 
 const EmptyView=()=>{
   return(
@@ -69,11 +39,51 @@ const HomeScreen=() =>  {
   const [isVisible, setVisible] = useState(false)
   const dispatch=useDispatch()
   const reduxState=useSelector((state)=>state)
-  //console.log(reduxState);
+  console.log(reduxState);
+
+  const CardContent=(props)=>{
+    return (
+    <View>
+     
+      <Text style={styles.heading}>
+         {props.content.title}
+        </Text>
+        <Text style={styles.subHeading}>
+          {props.content.task}
+        </Text>
+    </View>
+    )
+  }
+  const Card=(props)=>{
+      console.log(props.props.isComplete);
+      const{id,isComplete}=props.props
+    return(
+      
+      <View style={styles.card}>
+  
+        <CheckBox
+  
+          title={<CardContent content={props.props}/>}
+          checked={props.props.isComplete}
+          onPress={()=>handleCheck(id)}
+          uncheckedIcon={<Ionicons name={'ellipse-outline'} size={30} color={'grey'}/>}
+          checkedIcon={<Ionicons name={'checkmark-circle'} size={30} color={'dodgerblue'}/>}
+        />
+  
+        
+      </View>
+    )
+  }
+
+
   const handleSubmit=()=>{
-    //console.log(state)
+    console.log(state)
     dispatch(addTask(state))
     
+  }
+  const handleCheck=(id)=>{
+    console.log(id)
+    dispatch(checkTask(id))
   }
 
   return(
@@ -89,9 +99,10 @@ const HomeScreen=() =>  {
       {
         reduxState.tasks.length>0?
         <FlatList
+        keyExtractor={(item, index) => item.key}
       data={reduxState.tasks}
       renderItem={(renderItem)=>
-        <Card props={renderItem.item}/>
+        <Card props={renderItem.item} key={renderItem.item.id}/>
       
       }
       />:
@@ -122,7 +133,7 @@ const HomeScreen=() =>  {
         
         <Input
           placeholder='Title'
-          onChangeText={(val)=>setState({...state,title:val})}
+          onChangeText={(val)=>setState({...state,title:val,id:nextId()})}
         />
 
         <Input

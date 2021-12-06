@@ -1,10 +1,18 @@
-import { ADD_TASK, DELETE_TASK } from "./type"
+import { ADD_TASK, DELETE_TASK,CHECK_TASK } from "./type"
 
 
 const addTask=(task)=>{
     return {
         type:ADD_TASK,
         payload:task
+    }
+}
+
+
+const checkTask=(id)=>{
+    return{
+        type:CHECK_TASK,
+        payload:id
     }
 }
 
@@ -15,4 +23,4 @@ const deleteTask=(task)=>{
     }
 }
 
-export  {addTask,deleteTask}
+export  {addTask,deleteTask,checkTask}

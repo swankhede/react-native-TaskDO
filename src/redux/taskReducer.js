@@ -21,9 +21,12 @@ const taskReducer=(state=initialState,action)=>{
                             
                         }
                
-        case DELETE_TASK:return{
-            tasks:state.tasks.push(action.payload)
-        }
+        case DELETE_TASK:
+                        const newTasks=state.tasks.filter(task=>action.payload!=task.id)
+                        console.log("25",newTasks);
+                        return {
+                            tasks:[...newTasks]
+                        }
 
         default:return state
     }

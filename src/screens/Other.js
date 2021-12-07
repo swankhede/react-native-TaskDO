@@ -11,11 +11,7 @@ const Other=() =>  {
 
       <View style={styles.container}> 
       <Text style={styles.heading}>Other</Text>
-      <View style={styles.fabContainer}>
-        <TouchableOpacity style={styles.fab}>
-          <FontAwesome5 name={'plus'} color={'white'}/>
-        </TouchableOpacity>
-      </View>
+     
     
 
       </View>

@@ -1,30 +1,13 @@
 import React,{useState} from 'react';
-import { StyleSheet, Text,View,Button,TouchableOpacity, FlatList,Image } from 'react-native';
+import { StyleSheet, Text,View,Button,TouchableOpacity, FlatList,Image, TouchableWithoutFeedbackBase } from 'react-native';
 import { FAB,CheckBox,SearchBar,BottomSheet,Input,ListItem} from 'react-native-elements';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch ,useSelector } from 'react-redux';
-import { addTask, checkTask } from '../redux/action';
+import { addTask, checkTask, deleteTask } from '../redux/action';
 import nextId from "react-id-generator";
-
-
-
-const EmptyView=()=>{
-  return(
-    <View style={styles.empty}>
-    
-      <FontAwesome5
-      
-      name={'folder-open'}
-      color={'grey'}
-      size={100}     
-        />
-    <Text style={styles.emptyText}>No Tasks</Text>
-   
-     
-    </View>
-  )
-}
+import { EmptyView } from '../components/EmptyView';
+import { ToDoCard } from '../components/ToDoCard';
 
 
 const HomeScreen=() =>  {
@@ -37,35 +20,45 @@ const HomeScreen=() =>  {
     isComplete:false
   })
   const [isVisible, setVisible] = useState(false)
+  const [isDeleteVisible, setDeleteVisible] = useState(false)
   const dispatch=useDispatch()
   const reduxState=useSelector((state)=>state)
-  console.log(reduxState);
+  //console.log(reduxState);
 
   const CardContent=(props)=>{
+    const{id}=props.content
+    //console.log("id",id);
     return (
-    <View>
-     
-      <Text style={styles.heading}>
+    <View style={styles.row}>
+      <View>
+      <Text style={[styles.heading,props.content.isComplete?styles.strike:null]}>
          {props.content.title}
         </Text>
-        <Text style={styles.subHeading}>
+        <Text style={[styles.subHeading,props.content.isComplete?styles.strike:null]}>
           {props.content.task}
         </Text>
+      </View>
+    
+        <TouchableOpacity style={styles.closeBtn} onPress={()=>handleDelete(id)}>
+        <FontAwesome5 name={'times'} color={'grey'} size={15}/>  
+       </TouchableOpacity>
     </View>
     )
   }
   const Card=(props)=>{
-      console.log(props.props.isComplete);
+      //console.log(props.props.isComplete);
       const{id,isComplete}=props.props
+      
     return(
       
       <View style={styles.card}>
   
         <CheckBox
   
-          title={<CardContent content={props.props}/>}
+          title={<CardContent content={props.props} key={props.props.id}/>}
           checked={props.props.isComplete}
           onPress={()=>handleCheck(id)}
+          onLongPress={()=>handleBottomDelete(id)}
           uncheckedIcon={<Ionicons name={'ellipse-outline'} size={30} color={'grey'}/>}
           checkedIcon={<Ionicons name={'checkmark-circle'} size={30} color={'dodgerblue'}/>}
         />
@@ -77,13 +70,22 @@ const HomeScreen=() =>  {
 
 
   const handleSubmit=()=>{
-    console.log(state)
+    //console.log(state)
     dispatch(addTask(state))
     
   }
   const handleCheck=(id)=>{
-    console.log(id)
+    console.log("line 78",id)
     dispatch(checkTask(id))
+  }
+  const handleDelete=(id)=>{
+    console.log(id)
+    dispatch(deleteTask(id))
+    
+  }
+  const handleBottomDelete=(id)=>{
+    setDeleteVisible(true)
+    handleDelete(id)
   }
 
   return(
@@ -102,18 +104,20 @@ const HomeScreen=() =>  {
         keyExtractor={(item, index) => item.key}
       data={reduxState.tasks}
       renderItem={(renderItem)=>
-        <Card props={renderItem.item} key={renderItem.item.id}/>
+        
+        <ToDoCard  
+        item={renderItem.item} 
+        key={renderItem.item.id}
+        handleBottomDelete={handleDelete}
+        handleDelete={handleDelete}
+        handleCheck={handleCheck}
+        />
       
       }
       />:
       <EmptyView/>
       }
       
-    
-
-
-
-
       <View style={styles.fabContainer}>
         <TouchableOpacity style={styles.fab} onPress={()=>setVisible(true)}>
           <FontAwesome5 name={'plus'} color={'white'}/>
@@ -143,6 +147,24 @@ const HomeScreen=() =>  {
         />
         <TouchableOpacity style={styles.addBtn} onPress={handleSubmit}>
           <Text style={styles.addBtnText}>Add Task</Text>
+        </TouchableOpacity>
+        
+        </View>
+      
+     
+    </BottomSheet>
+    
+    <BottomSheet
+     isVisible={isDeleteVisible}
+     >
+      <View style={styles.sheet}>
+      
+      <TouchableOpacity style={styles.closeBtn} onPress={()=>setDeleteVisible(false)}>
+        <FontAwesome5 name={'times'} color={'black'} size={20}/>  
+       </TouchableOpacity>
+       
+        <TouchableOpacity style={styles.addBtn} onPress={()=>handleDeleteBottom(id)}>
+        <FontAwesome5 name={'trash'} color={'white'} size={30}/>  
         </TouchableOpacity>
         
         </View>
@@ -185,6 +207,12 @@ const styles = StyleSheet.create({
     justifyContent:'center',
   
   },
+  row:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    flex:1,
+  },
   card:{
     flex:1,
     width:'100%',
@@ -217,19 +245,11 @@ const styles = StyleSheet.create({
     color:'white',
     fontSize:20,
   },
-  empty:{
-    flex:1,
-    justifyContent:'center', 
-    alignSelf:'center',
-    alignItems:'center',
-  },
-
-  emptyText:{
-    color:'grey',
-    fontSize:20,
-    
+  strike:{
+    textDecorationLine:'line-through',
   }
   
 })
 export default HomeScreen
+
 

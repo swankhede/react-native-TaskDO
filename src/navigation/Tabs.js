@@ -16,8 +16,8 @@ const options=({route})=>({
       if (route.name === 'Home') {
         //console.log("foused",focused)
         iconName = 'home'
-      } else if (route.name === 'History') {
-        iconName = 'timer';
+      } else if (route.name === 'Settings') {
+        iconName = 'settings';
       }
 
 
@@ -31,7 +31,7 @@ const Tabs = () => {
     <NavigationContainer>
     <Tab.Navigator screenOptions={options} >
           <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="History" component={Other} />
+          <Tab.Screen name="Settings" component={Other} />
         
         </Tab.Navigator>
       </NavigationContainer>

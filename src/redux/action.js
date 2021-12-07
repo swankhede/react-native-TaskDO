@@ -16,10 +16,10 @@ const checkTask=(id)=>{
     }
 }
 
-const deleteTask=(task)=>{
+const deleteTask=(id)=>{
     return {
         type:DELETE_TASK,
-        payload:task
+        payload:id
     }
 }
 

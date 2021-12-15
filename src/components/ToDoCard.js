@@ -5,8 +5,6 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 
-
-
 const CardContent=(props)=>{
     const {id}=props.content
     const{handleDelete}=props;
@@ -51,10 +49,7 @@ export const ToDoCard=(props)=>{
   }
 
   const styles = StyleSheet.create({
-    root:{
-      flex:1,
-      
-    },
+  
     heading:{
       fontSize:20,
       fontWeight:'bold'
@@ -64,24 +59,7 @@ export const ToDoCard=(props)=>{
       flex:1,
      
     },
-    fabContainer:{
-      position:'absolute',
-      zIndex:99,
-      bottom:30,
-      alignSelf:'flex-end',
-      right:20,
   
-     
-    },
-    fab:{
-      borderRadius:500,
-      backgroundColor:'dodgerblue',
-      width:50,
-      height:50,
-      alignItems:'center',
-      justifyContent:'center',
-    
-    },
     row:{
       flexDirection:'row',
       justifyContent:'space-between',
@@ -92,18 +70,7 @@ export const ToDoCard=(props)=>{
       flex:1,
       width:'100%',
     },
-    searchContainer:
-    { backgroundColor:'transparent',
-     borderTopColor:0,
-      borderBottomColor:0
-    },
-    inputContainerStyle:{
-      backgroundColor:'white',
-      borderRadius:10,
-    },
-    inputStyle:{
-      color:'black'
-    },
+   
     sheet:{
       backgroundColor:'white',
       

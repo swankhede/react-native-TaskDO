@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "42814240371",
+    "project_id": "task-do-f34b2",
+    "storage_bucket": "task-do-f34b2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:42814240371:android:faf28e6ba8983346c7dc06",
+        "android_client_info": {
+          "package_name": "com.taskdo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "42814240371-9k7s1ad8socdb7gu8rqsfu9khsncn9pg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChx8OxuJM-ndkvpcS3a4Gq2MRoG9GtNOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "42814240371-9k7s1ad8socdb7gu8rqsfu9khsncn9pg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -25,49 +25,6 @@ const HomeScreen=() =>  {
   const reduxState=useSelector((state)=>state)
   //console.log(reduxState);
 
-  const CardContent=(props)=>{
-    const{id}=props.content
-    //console.log("id",id);
-    return (
-    <View style={styles.row}>
-      <View>
-      <Text style={[styles.heading,props.content.isComplete?styles.strike:null]}>
-         {props.content.title}
-        </Text>
-        <Text style={[styles.subHeading,props.content.isComplete?styles.strike:null]}>
-          {props.content.task}
-        </Text>
-      </View>
-    
-        <TouchableOpacity style={styles.closeBtn} onPress={()=>handleDelete(id)}>
-        <FontAwesome5 name={'times'} color={'grey'} size={15}/>  
-       </TouchableOpacity>
-    </View>
-    )
-  }
-  const Card=(props)=>{
-      //console.log(props.props.isComplete);
-      const{id,isComplete}=props.props
-      
-    return(
-      
-      <View style={styles.card}>
-  
-        <CheckBox
-  
-          title={<CardContent content={props.props} key={props.props.id}/>}
-          checked={props.props.isComplete}
-          onPress={()=>handleCheck(id)}
-          onLongPress={()=>handleBottomDelete(id)}
-          uncheckedIcon={<Ionicons name={'ellipse-outline'} size={30} color={'grey'}/>}
-          checkedIcon={<Ionicons name={'checkmark-circle'} size={30} color={'dodgerblue'}/>}
-        />
-  
-        
-      </View>
-    )
-  }
-
 
   const handleSubmit=()=>{
     //console.log(state)
@@ -92,18 +49,20 @@ const HomeScreen=() =>  {
     <View style={styles.root}>
 
       <View style={styles.container}> 
+      
       <SearchBar
-      containerStyle={styles.searchContainer}
-      inputContainerStyle={styles.inputContainerStyle}
-      inputStyle={styles.inputStyle}
-      placeholder="Type Here..."
+        containerStyle={styles.searchContainer}
+        inputContainerStyle={styles.inputContainerStyle}
+        inputStyle={styles.inputStyle}
+        placeholder="Type Here..."
       />
+      
       {
         reduxState.tasks.length>0?
         <FlatList
         keyExtractor={(item, index) => item.key}
-      data={reduxState.tasks}
-      renderItem={(renderItem)=>
+        data={reduxState.tasks}
+        renderItem={(renderItem)=>
         
         <ToDoCard  
         item={renderItem.item} 
@@ -120,7 +79,7 @@ const HomeScreen=() =>  {
       
       <View style={styles.fabContainer}>
         <TouchableOpacity style={styles.fab} onPress={()=>setVisible(true)}>
-          <FontAwesome5 name={'plus'} color={'white'}/>
+          <FontAwesome5 name={'plus'} color={'white'} size={20}/>
         </TouchableOpacity>
       </View>
     

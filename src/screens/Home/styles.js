@@ -1,13 +1,9 @@
 import { StyleSheet } from "react-native"
-import store from "../../redux/store"
 
 
 
 
-const getTheme=()=>store.getState().theme.theme==='light'?'white':'black'
 
-const backgroundColor=getTheme()
-const color=getTheme()
 
 export const styles = StyleSheet.create({
     root:{
@@ -64,7 +60,7 @@ export const styles = StyleSheet.create({
       color:'black'
     },
     sheet:{
-      backgroundColor:backgroundColor,
+      backgroundColor:'white',
       
       
     },
@@ -101,11 +97,29 @@ export const styles = StyleSheet.create({
       borderRadius:10,
     },
     addBtnText:{
-      color:color,
+      color:'white',
       fontSize:20,
     },
     strike:{
       textDecorationLine:'line-through',
+    },
+    bottomCloseBtn:{
+      padding:20,
+    },
+    date:{
+      fontSize:12,
+      color:'grey'
+    },
+    sheet:{
+      backgroundColor:'white',
+    },
+    bottomRow:{
+      flexDirection:'row',
+      padding:20,
+    },
+   
+    text:{
+      marginLeft:10
     }
     
   })

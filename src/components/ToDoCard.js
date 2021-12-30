@@ -36,14 +36,8 @@ export const ToDoCard=(props)=>{
       const{item}=props
       console.log("item",props)
       const [isVisible, setVisible] = useState(false)
-     
-
       
-     
-
-
-
-    return(
+      return(
       
       <View style={styles.card}>
   
@@ -51,8 +45,8 @@ export const ToDoCard=(props)=>{
   
           title={<CardContent content={item} handleDelete={props.handleDelete} key={item.id}/>}
           checked={item.isComplete}
-          onPress={()=>props.handleCheck(item.id)}
-          onLongPress={()=>setVisible(true)}
+          onPress={()=>props.handleCheck(item)}
+          onLongPress={()=>props.handleLongPress(item)}
           uncheckedIcon={<Ionicons name={'ellipse-outline'} size={30} color={'grey'}/>}
           checkedIcon={<Ionicons name={'checkmark-circle'} size={30} color={'dodgerblue'}/>}
         />

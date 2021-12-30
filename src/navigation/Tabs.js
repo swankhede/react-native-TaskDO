@@ -7,7 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/Home/HomeScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Demo from '../screens/Demo';
-import AddTask from '../screens/Home/AddTask';
+import AddTask from '../screens/AddTask/AddTask';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const options=({route})=>({

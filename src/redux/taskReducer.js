@@ -6,17 +6,19 @@ const initialState={
 }
 
 const taskReducer=(state=initialState,action)=>{
-    console.log("pay",action.payload);
+    console.log(action.payload);
     switch(action.type){
         case ADD_TASK:return{
             tasks:[...state.tasks,action.payload]
 
         }
-        case CHECK_TASK:const tasks =state.tasks.map(task=>task.id==action.payload?{...task,isComplete:!task.isComplete}:task)
-                        console.log(tasks);
+        case CHECK_TASK:const filteredTask=state.tasks.filter(task=>action.payload.id!=task.id)
+                        let task={...action.payload}
+                        task={...task,isComplete:!task.isComplete}
+                        filteredTask.push(task)
                         return{
                             tasks:[
-                                ...tasks
+                                ...filteredTask
                             ]
                             
                         }

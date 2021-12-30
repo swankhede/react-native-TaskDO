@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import { StyleSheet, Text,View,Button,TouchableOpacity, FlatList,Image, TouchableWithoutFeedbackBase, ScrollView, SafeAreaView } from 'react-native';
 import { FAB,CheckBox,SearchBar,BottomSheet,Input,ListItem} from 'react-native-elements';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
@@ -8,70 +8,60 @@ import { addTask, checkTask, deleteTask, updateTask } from '../../redux/action';
 import nextId from "react-id-generator";
 import { EmptyView } from '../../components/EmptyView';
 import { ToDoCard } from '../../components/ToDoCard';
-import { styles } from './styles';
+import { styles } from '../Home/styles';
 import moment from 'moment';
 
 const AddTask=(props) =>  {
-  console.log(props);
+
+  const {task,isEdit}=props.route.params
   const [state, setState] = useState({
-   
-    title:null,
-    task:null,
-    priority:null,
+    id:isEdit?task.id:'',
+    title:isEdit?task.title:'',
+    task:isEdit?task.task:'',
+    priority:'',
     isComplete:false
   })
   const [isVisible, setVisible] = useState(false)
-  const [isEdit, setEdit] = useState(false)
+
   const [isDeleteVisible, setDeleteVisible] = useState(false)
   const dispatch=useDispatch()
   const reduxState=useSelector(({tasks})=>tasks)
   const theme=useSelector(({theme})=>theme)
-  
-  
+ 
+
 
 
   const handleSubmit=()=>{
-    if(isEdit){
-      setState({...state,date:moment().format('ll')})
-      console.log(state.id);
-      dispatch(updateTask(state))
-      setState({
-        title:null,
-        task:null,
-        priority:null,
-        isComplete:false
-      })
-      setEdit(false)
+    if(state.title!='' || state.task!=''){
+      if(isEdit){
+        setState({...state,date:moment().format('ll')})
+        console.log(state.id,"-------dispatching--------");
+        dispatch(updateTask(state))
+        setState({
+          title:null,
+          task:null,
+          priority:null,
+          isComplete:false
+        })
+       props.navigation.goBack()
+      }else{
+        const task={...state,id:nextId(),date:moment().format('ll')}
+        dispatch(addTask(task))
+        setState({
+          title:null,
+          task:null,
+          priority:null,
+          isComplete:false
+        })
+      }
     }else{
-      const task={...state,id:nextId(),date:moment().format('ll')}
-      dispatch(addTask(task))
-      setState({
-        title:null,
-        task:null,
-        priority:null,
-        isComplete:false
-      })
+      props.navigation.goBack()
     }
+  
    
     
   }
-  const handleCheck=(id)=>{
-    console.log("line 78",id)
-    dispatch(checkTask(id))
-  }
-  const handleDelete=(id)=>{
-    console.log(id)
-    dispatch(deleteTask(id))
-    
-  }
-  const handleEdit=(task)=>{
-    setState({...task})
-    setEdit(true)
-    console.log(task);
-    setVisible(true)
-   
-    
-  }
+ 
 
   return(
     <SafeAreaView style={styles.root}>

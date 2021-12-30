@@ -11,6 +11,7 @@ import { ToDoCard } from '../../components/ToDoCard';
 import { styles } from './styles';
 import moment from 'moment';
 
+
 const HomeScreen=(props) =>  {
   console.log(props);
   const [state, setState] = useState({
@@ -56,9 +57,13 @@ const HomeScreen=(props) =>  {
    
     
   }
-  const handleCheck=(id)=>{
-    console.log("line 78",id)
-    dispatch(checkTask(id))
+  const handleLongPress=(task)=>{
+    setVisible(true)
+    setState({...task})
+  }
+  const handleCheck=(task)=>{
+    console.log("line 78",task)
+    dispatch(checkTask(task))
   }
   const handleDelete=(id)=>{
     console.log(id)
@@ -66,10 +71,12 @@ const HomeScreen=(props) =>  {
     
   }
   const handleEdit=(task)=>{
-    setState({...task})
-    setEdit(true)
-    console.log(task);
-    setVisible(true)
+    setVisible(false)
+    console.log("-----task-----",task);
+    props.navigation.navigate('task',{
+      isEdit:true,
+      task:task
+    })
    
     
   }
@@ -95,7 +102,8 @@ const HomeScreen=(props) =>  {
         renderItem={(renderItem)=>
         
         <ToDoCard  
-        item={renderItem.item} 
+        item={renderItem.item}
+        handleLongPress={handleLongPress} 
         handleDelete={handleDelete}
         handleCheck={handleCheck}
         handleEdit={handleEdit}
@@ -107,7 +115,7 @@ const HomeScreen=(props) =>  {
       }
       
       <View style={styles.fabContainer}>
-        <TouchableOpacity style={styles.fab} onPress={()=>props.navigation.navigate('task')}>
+        <TouchableOpacity style={styles.fab} onPress={()=>props.navigation.navigate('task',{isEdit:false})}>
           <FontAwesome5 name={'plus'} color={'white'} size={20}/>
         </TouchableOpacity>
       </View>
@@ -127,14 +135,14 @@ const HomeScreen=(props) =>  {
         <FontAwesome5 name={'times'} color={'black'} size={20}/>  
        </TouchableOpacity>
         
-        <TouchableOpacity style={styles.bottomRow} onPress={()=>props.handleEdit(item)}>
+        <TouchableOpacity style={styles.bottomRow} onPress={()=>handleEdit(state)}>
         <TouchableOpacity style={styles.deleteBtn} >
           <FontAwesome5 name={'pen'} color={'black'} size={20}/>  
           </TouchableOpacity>
           <Text style={styles.text}>Edit</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.bottomRow}onPress={()=>props.handleDelete(item.id)}>
+        <TouchableOpacity style={styles.bottomRow}onPress={()=>handleDelete(state.id)}>
         <TouchableOpacity style={styles.deleteBtn} >
           <FontAwesome5 name={'trash'} color={'black'} size={20}/>  
           </TouchableOpacity>
@@ -146,6 +154,7 @@ const HomeScreen=(props) =>  {
       
      
     </BottomSheet>
+
     </View>
    
   )

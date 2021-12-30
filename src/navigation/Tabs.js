@@ -1,15 +1,20 @@
 import React,{useEffect} from 'react'
-import { View, Text } from 'react-native'
+import { View, Text} from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import Other from '../screens/Other';
+import { createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import HomeScreen from '../screens/Home/HomeScreen';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import Demo from '../screens/Demo';
+import AddTask from '../screens/Home/AddTask';
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 const options=({route})=>({
     headerShown:false,
     keyboardHidesTabBar: true,
+    presentation: 'modal',
+    gestureDirection: 'vertical',
     tabBarIcon:({ color, size }) => {
       let iconName;
 
@@ -30,11 +35,10 @@ const Tabs = () => {
 
     return (
     <NavigationContainer>
-    <Tab.Navigator screenOptions={options} >
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Settings" component={Other} />
-        
-        </Tab.Navigator>
+    <Stack.Navigator screenOptions={options}>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name='task' component={AddTask}/>
+      </Stack.Navigator>
       </NavigationContainer>
     )
 }

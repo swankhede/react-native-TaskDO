@@ -1,16 +1,18 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { StyleSheet, Text,View,Button,TouchableOpacity, FlatList,Image, TouchableWithoutFeedbackBase, ScrollView, SafeAreaView } from 'react-native';
 import { FAB,CheckBox,SearchBar,BottomSheet,Input,ListItem} from 'react-native-elements';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch ,useSelector } from 'react-redux';
-import { addTask, checkTask, deleteTask, updateTask } from '../../redux/action';
+import { addTask, checkTask, deleteTask, signIn, signInUser, signOut, signOutUser, updateTask } from '../../redux/action';
 import nextId from "react-id-generator";
 import { EmptyView } from '../../components/EmptyView';
 import { ToDoCard } from '../../components/ToDoCard';
 import { styles } from './styles';
 import moment from 'moment';
-
+import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import store from '../../redux/store';
 
 const HomeScreen=(props) =>  {
   console.log(props);
@@ -22,41 +24,86 @@ const HomeScreen=(props) =>  {
     isComplete:false
   })
   const [isVisible, setVisible] = useState(false)
+  const [isLoginSheet, setLoginSheet] = useState(false)
   const [isEdit, setEdit] = useState(false)
-  const [isDeleteVisible, setDeleteVisible] = useState(false)
+  const [isLoggedIn, setLoggedIn] = useState(false)
+  const [userInfo, setUserInfo] = useState('')
+  
   const dispatch=useDispatch()
   const reduxState=useSelector(({tasks})=>tasks)
-  const theme=useSelector(({theme})=>theme)
-  
-  
+  const userData=useSelector(({state})=>state)
+  console.log("=======================state=======================");
+
+  console.log(userData.isSignedIn);
 
 
-  const handleSubmit=()=>{
-    if(isEdit){
-      setState({...state,date:moment().format('ll')})
-      console.log(state.id);
-      dispatch(updateTask(state))
-      setState({
-        title:null,
-        task:null,
-        priority:null,
-        isComplete:false
-      })
-      setEdit(false)
-    }else{
-      setState({...state,id:nextId(),date:moment().format('ll')})
-      console.log(state.id);
-      dispatch(addTask(state))
-      setState({
-        title:null,
-        task:null,
-        priority:null,
-        isComplete:false
-      })
+  console.log("=======================state=======================");
+  useEffect(async() => {
+    GoogleSignin.configure({
+      webClientId:'42814240371-9k7s1ad8socdb7gu8rqsfu9khsncn9pg.apps.googleusercontent.com',
+    });
+    const isSignedIn = await GoogleSignin.isSignedIn();
+    //alert(isSignedIn)
+    !isSignedIn?dispatch(signInUser({isSignedIn:false})):null
+    
+  }, [])
+  
+  const onGoogleButtonPress=async()=>{
+    try{
+      const { idToken } = await GoogleSignin.signIn();
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      setLoggedIn(isSignedIn)
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      //console.log("cred=====>",googleCredential)
+      const res =await auth().signInWithCredential(googleCredential);
+      dispatch(signInUser (res))
+    }
+    catch(e){
+      console.log("Error=>>>>>>>>>>",e);
     }
    
+   
+  }
+
+  const onGoogleSignOut=async()=>{
+    try{
+      await GoogleSignin.revokeAccess(); 
+      console.log('passed revoke access'); 
+      console.log('passed signOut');
+      dispatch(signOutUser())
+    }catch(e){
+      console.error("Error>>>>>>>>",e);
+    }
     
   }
+
+  const TopView=()=>(
+    <View style={styles.topView}>
+      <Text>{userData?.isSignedIn?userData?.user?.displayName:null}</Text>
+        {
+          userData.isSignedIn?
+         <TouchableOpacity onPress={()=>setLoginSheet(!isLoginSheet)}>
+              <Image
+              source={{uri:userData?.user?.photoURL}}
+              style={styles.userImage}
+              />
+          </TouchableOpacity>
+        
+          :
+          <TouchableOpacity onPress={()=>setLoginSheet(!isLoginSheet)}>
+            <Image
+              source={require('../../assests/no-user.jpeg')}
+              style={styles.userImage}
+            />
+          </TouchableOpacity>
+
+        }
+       </View>
+  )
+  
+
+
+ 
   const handleLongPress=(task)=>{
     setVisible(true)
     setState({...task})
@@ -82,9 +129,10 @@ const HomeScreen=(props) =>  {
   }
 
   return(
-    <View style={styles.root}>
+    <View style={styles.main}>
+      
     <SafeAreaView style={styles.root}>
-     
+    <TopView/>
       <View style={styles.container}> 
       
       <SearchBar
@@ -93,8 +141,9 @@ const HomeScreen=(props) =>  {
         inputStyle={styles.inputSearchStyle}
         placeholder="Type Here..."
       />
-      
-      {
+       
+       
+       {
         reduxState.tasks.length>0?
         <FlatList
         keyExtractor={(item, index) => item.id}
@@ -112,7 +161,7 @@ const HomeScreen=(props) =>  {
       }
       />:
       <EmptyView/>
-      }
+      } 
       
       <View style={styles.fabContainer}>
         <TouchableOpacity style={styles.fab} onPress={()=>props.navigation.navigate('task',{isEdit:false})}>
@@ -154,7 +203,33 @@ const HomeScreen=(props) =>  {
       
      
     </BottomSheet>
-
+    <BottomSheet
+     isVisible={isLoginSheet}
+     >
+      <View style={styles.loginSheet}>
+      <TouchableOpacity style={styles.bottomCloseBtn} onPress={()=>setLoginSheet(false)}>
+        <FontAwesome5 name={'times'} color={'black'} size={20}/>  
+       </TouchableOpacity>
+         
+        {
+          userData.isSignedIn?
+          <TouchableOpacity style={styles.btn} onPress={() => onGoogleSignOut() }>
+            <FontAwesome5 name='sign-out-alt' size={30} color={'white'}/>
+          <Text style={styles.btnText}>Sign out</Text>
+          </TouchableOpacity>
+        :
+        <TouchableOpacity style={styles.btn} onPress={() => onGoogleButtonPress()}>
+          <FontAwesome5 name='google' size={30} color={'white'}/>
+        <Text style={styles.btnText}>Signin with Google</Text>
+        </TouchableOpacity>
+        }
+          
+         
+      </View>
+      
+     
+    </BottomSheet>
+   
     </View>
    
   )

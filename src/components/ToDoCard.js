@@ -3,9 +3,6 @@ import { StyleSheet, Text,View,Button,TouchableOpacity, FlatList,Image, Touchabl
 import { FAB,CheckBox,SearchBar,BottomSheet,Input,ListItem} from 'react-native-elements';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import { useDispatch } from 'react-redux';
-import { checkTask, deleteTask } from '../redux/action';
-
 
 const CardContent=(props)=>{
     const {id}=props.content
@@ -51,34 +48,7 @@ export const ToDoCard=(props)=>{
           checkedIcon={<Ionicons name={'checkmark-circle'} size={30} color={'dodgerblue'}/>}
         />
   
-      <BottomSheet
-     isVisible={isVisible}
-     >
-      <View style={styles.sheet}>
-      
-      <TouchableOpacity style={styles.bottomCloseBtn} onPress={()=>setVisible(false)}>
-        <FontAwesome5 name={'times'} color={'black'} size={20}/>  
-       </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.bottomRow} onPress={()=>props.handleEdit(item)}>
-        <TouchableOpacity style={styles.deleteBtn} >
-          <FontAwesome5 name={'pen'} color={'black'} size={20}/>  
-          </TouchableOpacity>
-          <Text style={styles.text}>Edit</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.bottomRow}onPress={()=>props.handleDelete(item.id)}>
-        <TouchableOpacity style={styles.deleteBtn} >
-          <FontAwesome5 name={'trash'} color={'black'} size={20}/>  
-          </TouchableOpacity>
-          <Text style={styles.text}>Delete</Text>
-        </TouchableOpacity>
-        
-        
-        </View>
-      
-     
-    </BottomSheet>
       </View>
     )
   }

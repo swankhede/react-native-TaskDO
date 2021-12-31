@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native"
+import { Platform, StyleSheet } from "react-native"
 
 
 
@@ -6,6 +6,9 @@ import { StyleSheet } from "react-native"
 
 
 export const styles = StyleSheet.create({
+    main:{
+    flex:1,
+  },
     root:{
       flex:1,
       backgroundColor:'white'
@@ -64,6 +67,27 @@ export const styles = StyleSheet.create({
       
       
     },
+    loginSheet:{
+      backgroundColor:'white',
+      
+      height:200,
+
+    },
+    btn:{
+      flexDirection:'row',
+      backgroundColor:'dodgerblue',
+      alignItems:'center',
+      padding:10,
+      margin:10,
+      borderRadius:10,
+      justifyContent:'space-around'
+       
+    },
+    btnText:{
+      color:'white',
+      fontSize:20,
+      left:-15
+    },
     inputStyle:{
       backgroundColor:'whitesmoke',
       padding:15,
@@ -115,11 +139,26 @@ export const styles = StyleSheet.create({
     },
     bottomRow:{
       flexDirection:'row',
+      alignItems:'center',
       padding:20,
     },
    
+   
     text:{
       marginLeft:10
-    }
+    },
+    topView:{
+      flexDirection:'row',
+      alignItems:'center',
+      
+      justifyContent:'space-between',
+      marginHorizontal:Platform.OS=='android'?15:10,
+      marginVertical:5
+    },
+    userImage:{
+      borderRadius:20,
+      height:40,
+      width:40,
+    },
     
   })

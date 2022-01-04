@@ -1,18 +1,16 @@
 import React,{useState,useEffect} from 'react';
-import { StyleSheet, Text,View,Button,TouchableOpacity, FlatList,Image, TouchableWithoutFeedbackBase, ScrollView, SafeAreaView } from 'react-native';
-import { FAB,CheckBox,SearchBar,BottomSheet,Input,ListItem} from 'react-native-elements';
+import { Text,View,TouchableOpacity, FlatList,Image, SafeAreaView } from 'react-native';
+import {SearchBar,BottomSheet} from 'react-native-elements';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch ,useSelector } from 'react-redux';
-import { addTask, checkTask, deleteTask, signIn, signInUser, signOut, signOutUser, updateTask } from '../../redux/action';
-import nextId from "react-id-generator";
+import { addTask, checkTask, deleteTask, signInUser, signOutUser } from '../../redux/action';
 import { EmptyView } from '../../components/EmptyView';
 import { ToDoCard } from '../../components/ToDoCard';
 import { styles } from './styles';
-import moment from 'moment';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import store from '../../redux/store';
+import {getScheduleNotification } from '../../utils/notification';
+import firestore from '@react-native-firebase/firestore';
 
 const HomeScreen=(props) =>  {
   console.log(props);
@@ -25,9 +23,7 @@ const HomeScreen=(props) =>  {
   })
   const [isVisible, setVisible] = useState(false)
   const [isLoginSheet, setLoginSheet] = useState(false)
-  const [isEdit, setEdit] = useState(false)
   const [isLoggedIn, setLoggedIn] = useState(false)
-  const [userInfo, setUserInfo] = useState('')
   
   const dispatch=useDispatch()
   const reduxState=useSelector(({tasks})=>tasks)
@@ -38,15 +34,26 @@ const HomeScreen=(props) =>  {
 
 
   console.log("=======================state=======================");
+  
   useEffect(async() => {
     GoogleSignin.configure({
       webClientId:'42814240371-9k7s1ad8socdb7gu8rqsfu9khsncn9pg.apps.googleusercontent.com',
     });
+    
+ 
     const isSignedIn = await GoogleSignin.isSignedIn();
     //alert(isSignedIn)
     !isSignedIn?dispatch(signInUser({isSignedIn:false})):null
-    
+    const usersCollection = firestore().collection('Tasks');
+    const data=await usersCollection.doc('sfwBLSk5NlOH0Io9vuTe').get()
+    console.log(data);
+    dispatch(addTask(data._data))
   }, [])
+
+
+      
+    
+
   
   const onGoogleButtonPress=async()=>{
     try{
@@ -68,6 +75,7 @@ const HomeScreen=(props) =>  {
   const onGoogleSignOut=async()=>{
     try{
       await GoogleSignin.revokeAccess(); 
+      await GoogleSignin.signOut()
       console.log('passed revoke access'); 
       console.log('passed signOut');
       dispatch(signOutUser())
@@ -79,7 +87,7 @@ const HomeScreen=(props) =>  {
 
   const TopView=()=>(
     <View style={styles.topView}>
-      <Text>{userData?.isSignedIn?userData?.user?.displayName:null}</Text>
+        <Text style={{fontWeight:'bold',fontSize:20}}>Hey,Welcome</Text>
         {
           userData.isSignedIn?
          <TouchableOpacity onPress={()=>setLoginSheet(!isLoginSheet)}>
@@ -124,9 +132,7 @@ const HomeScreen=(props) =>  {
       isEdit:true,
       task:task
     })
-   
-    
-  }
+   }
 
   return(
     <View style={styles.main}>
@@ -135,12 +141,12 @@ const HomeScreen=(props) =>  {
     <TopView/>
       <View style={styles.container}> 
       
-      <SearchBar
+      {/* <SearchBar
         containerStyle={styles.searchContainer}
         inputContainerStyle={styles.searchContainerStyle}
         inputStyle={styles.inputSearchStyle}
         placeholder="Type Here..."
-      />
+      /> */}
        
        
        {
@@ -162,7 +168,9 @@ const HomeScreen=(props) =>  {
       />:
       <EmptyView/>
       } 
-      
+      {/* <TouchableOpacity style={styles.fab} onPress={()=>getScheduleNotification()}>
+        <Text>click me</Text>
+        </TouchableOpacity> */}
       <View style={styles.fabContainer}>
         <TouchableOpacity style={styles.fab} onPress={()=>props.navigation.navigate('task',{isEdit:false})}>
           <FontAwesome5 name={'plus'} color={'white'} size={20}/>
@@ -175,6 +183,7 @@ const HomeScreen=(props) =>  {
     
 
     </SafeAreaView>
+
     <BottomSheet
      isVisible={isVisible}
      >

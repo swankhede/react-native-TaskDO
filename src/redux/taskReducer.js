@@ -9,7 +9,7 @@ const taskReducer=(state=initialState,action)=>{
     console.log(action.payload);
     switch(action.type){
         case ADD_TASK:return{
-                    tasks:[...state.tasks,action.payload]
+                    tasks:action.payload
 
                     }
         case CHECK_TASK:const filteredTask=state.tasks.filter(task=>action.payload.id!=task.id)
@@ -41,7 +41,7 @@ const taskReducer=(state=initialState,action)=>{
                             tasks:[...newTasks]
                         }
 
-        default:return state
+        default:return initialState
     }
 }
 

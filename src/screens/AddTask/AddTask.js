@@ -10,12 +10,13 @@ import { EmptyView } from '../../components/EmptyView';
 import { ToDoCard } from '../../components/ToDoCard';
 import { styles } from '../Home/styles';
 import moment from 'moment';
+import { addTask as submitTask } from '../../utils/firebase/addTask';
 
 const AddTask=(props) =>  {
 
   const {task,isEdit}=props.route.params
   const [state, setState] = useState({
-    id:isEdit?task.id:'',
+    //id:isEdit?task.id:'',
     title:isEdit?task.title:'',
     task:isEdit?task.task:'',
     priority:'',
@@ -92,7 +93,7 @@ const AddTask=(props) =>  {
       value={state.task}
       onChangeText={(val)=>setState({...state,task:val})}
     />
-    <TouchableOpacity style={styles.addBtn} onPress={handleSubmit}>
+    <TouchableOpacity style={styles.addBtn} onPress={()=>submitTask(state,props.navigation)}>
       <Text style={styles.addBtnText}>{isEdit?'Edit Task':'Add Task'}</Text>
     </TouchableOpacity>
 

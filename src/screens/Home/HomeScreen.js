@@ -7,13 +7,16 @@ import { addTask, checkTask, deleteTask, signInUser, signOutUser } from '../../r
 import { EmptyView } from '../../components/EmptyView';
 import { ToDoCard } from '../../components/ToDoCard';
 import { styles } from './styles';
-import auth from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import {getScheduleNotification } from '../../utils/notification';
 import firestore from '@react-native-firebase/firestore';
+import { getTasks } from '../../utils/firebase/getTasks';
+import { subscribe } from '../../utils/firebase/subscriber';
+import { EventSubscriptionVendor } from 'react-native';
 
 const HomeScreen=(props) =>  {
-  console.log(props);
+  //console.log(props);
   const [state, setState] = useState({
    
     title:null,
@@ -23,14 +26,15 @@ const HomeScreen=(props) =>  {
   })
   const [isVisible, setVisible] = useState(false)
   const [isLoginSheet, setLoginSheet] = useState(false)
-  const [isLoggedIn, setLoggedIn] = useState(false)
+  
+  
   
   const dispatch=useDispatch()
   const reduxState=useSelector(({tasks})=>tasks)
   const userData=useSelector(({state})=>state)
   console.log("=======================state=======================");
 
-  console.log(userData.isSignedIn);
+  //console.log(  userData.user.uid);
 
 
   console.log("=======================state=======================");
@@ -43,26 +47,37 @@ const HomeScreen=(props) =>  {
  
     const isSignedIn = await GoogleSignin.isSignedIn();
     //alert(isSignedIn)
-    !isSignedIn?dispatch(signInUser({isSignedIn:false})):null
-    const usersCollection = firestore().collection('Tasks');
-    const data=await usersCollection.doc('sfwBLSk5NlOH0Io9vuTe').get()
-    console.log(data);
-    dispatch(addTask(data._data))
+    //!isSignedIn?dispatch(signInUser({isSignedIn:false})):null
+    
+    
+    // dbTasks.doc('kbraxmkKrWnWIXSLDShl').get()
+    // .then(res=>setState(res._data))
+
   }, [])
+
+
+
+  useEffect(() => {
+    console.log("line 61",userData?.user?.uid);
+    const sub=subscribe(userData?.user?.uid,dispatch)
+    return sub
+  
+  }, [userData])
+  
 
 
       
     
 
-  
   const onGoogleButtonPress=async()=>{
     try{
       const { idToken } = await GoogleSignin.signIn();
       const isSignedIn = await GoogleSignin.isSignedIn();
-      setLoggedIn(isSignedIn)
+      //setLoggedIn(isSignedIn)
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      //console.log("cred=====>",googleCredential)
+      
       const res =await auth().signInWithCredential(googleCredential);
+      //console.log("cred=====>",res)
       dispatch(signInUser (res))
     }
     catch(e){

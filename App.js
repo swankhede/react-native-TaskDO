@@ -15,6 +15,7 @@ crashlytics().setCrashlyticsCollectionEnabled(true)
 
 const App=() =>  {
   const{store,persistor}=stores()
+  
   return(
     <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>

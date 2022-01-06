@@ -6,17 +6,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch ,useSelector } from 'react-redux';
 import { addTask, checkTask, deleteTask, updateTask } from '../../redux/action';
 import nextId from "react-id-generator";
-import { EmptyView } from '../../components/EmptyView';
-import { ToDoCard } from '../../components/ToDoCard';
 import { styles } from '../Home/styles';
 import moment from 'moment';
-import { addTask as submitTask } from '../../utils/firebase/addTask';
+import { submitTask } from '../../utils/firebase/addTask';
 
 const AddTask=(props) =>  {
 
   const {task,isEdit}=props.route.params
   const [state, setState] = useState({
-    //id:isEdit?task.id:'',
+    id:isEdit?task.id:'',
     title:isEdit?task.title:'',
     task:isEdit?task.task:'',
     priority:'',
@@ -28,7 +26,7 @@ const AddTask=(props) =>  {
   const dispatch=useDispatch()
   const reduxState=useSelector(({tasks})=>tasks)
   const theme=useSelector(({theme})=>theme)
- 
+  const userData=useSelector(({state})=>state)
 
 
 
@@ -93,9 +91,15 @@ const AddTask=(props) =>  {
       value={state.task}
       onChangeText={(val)=>setState({...state,task:val})}
     />
-    <TouchableOpacity style={styles.addBtn} onPress={()=>submitTask(state,props.navigation)}>
-      <Text style={styles.addBtnText}>{isEdit?'Edit Task':'Add Task'}</Text>
-    </TouchableOpacity>
+    {
+    isEdit? 
+    <TouchableOpacity style={styles.addBtn} onPress={()=>submitTask(state,userData.user.uid,props.navigation,dispatch,isEdit)}>
+      <Text style={styles.addBtnText}>Edit Task</Text>
+    </TouchableOpacity> 
+    :  
+    <TouchableOpacity style={styles.addBtn} onPress={()=>submitTask(state,userData.user.uid,props.navigation,dispatch)}>
+      <Text style={styles.addBtnText}>Add Task</Text>
+    </TouchableOpacity>}
 
   
     

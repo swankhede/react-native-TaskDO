@@ -14,6 +14,10 @@ import firestore from '@react-native-firebase/firestore';
 import { getTasks } from '../../utils/firebase/getTasks';
 import { subscribe } from '../../utils/firebase/subscriber';
 import { EventSubscriptionVendor } from 'react-native';
+import store from '../../redux/store';
+import { handleCheckTask } from '../../utils/firebase/checkTask';
+import { handleDeleteTask } from '../../utils/firebase/deleteTask';
+import { users } from '../../utils/firebase/constants';
 
 const HomeScreen=(props) =>  {
   //console.log(props);
@@ -34,7 +38,7 @@ const HomeScreen=(props) =>  {
   const userData=useSelector(({state})=>state)
   console.log("=======================state=======================");
 
-  //console.log(  userData.user.uid);
+  console.log(  store().store.getState());
 
 
   console.log("=======================state=======================");
@@ -43,24 +47,32 @@ const HomeScreen=(props) =>  {
     GoogleSignin.configure({
       webClientId:'42814240371-9k7s1ad8socdb7gu8rqsfu9khsncn9pg.apps.googleusercontent.com',
     });
-    
- 
-    const isSignedIn = await GoogleSignin.isSignedIn();
-    //alert(isSignedIn)
-    //!isSignedIn?dispatch(signInUser({isSignedIn:false})):null
-    
-    
-    // dbTasks.doc('kbraxmkKrWnWIXSLDShl').get()
-    // .then(res=>setState(res._data))
+    console.log("line 48");
+}, [])
 
-  }, [])
-
-
+  useEffect(() => {
+    
+    //alert(userData.isSignedIn)
+    if(userData.isSignedIn){
+      users.doc(userData.user.uid).get()
+      .then(res=>{
+        //alert(res._exists)
+        if(!res._exists){
+         users.doc(userData.user.uid).set({
+           'id':userData.user.uid
+         })
+         
+        }
+      });
+    }
+   
+  }, [userData.isSignedIn])
 
   useEffect(() => {
     console.log("line 61",userData?.user?.uid);
     const sub=subscribe(userData?.user?.uid,dispatch)
-    return sub
+    console.log("line 56");
+    return ()=>sub
   
   }, [userData])
   
@@ -78,7 +90,9 @@ const HomeScreen=(props) =>  {
       
       const res =await auth().signInWithCredential(googleCredential);
       //console.log("cred=====>",res)
+
       dispatch(signInUser (res))
+      
     }
     catch(e){
       console.log("Error=>>>>>>>>>>",e);
@@ -96,6 +110,7 @@ const HomeScreen=(props) =>  {
       dispatch(signOutUser())
     }catch(e){
       console.error("Error>>>>>>>>",e);
+      dispatch(signOutUser())
     }
     
   }
@@ -133,11 +148,15 @@ const HomeScreen=(props) =>  {
   }
   const handleCheck=(task)=>{
     console.log("line 78",task)
-    dispatch(checkTask(task))
+    //dispatch(checkTask(task))
+    handleCheckTask(userData.user.uid,task)
+
   }
   const handleDelete=(id)=>{
     console.log(id)
-    dispatch(deleteTask(id))
+      handleDeleteTask(userData.user.uid,id)
+      setVisible(false)
+    //dispatch(deleteTask(id))
     
   }
   const handleEdit=(task)=>{
